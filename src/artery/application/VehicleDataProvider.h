@@ -19,7 +19,7 @@
 #ifndef ARTERY_VEHICLEDATAPROVIDER_H_
 #define ARTERY_VEHICLEDATAPROVIDER_H_
 
-#include "artery/traci/VehicleController.h"
+#include "artery/application/VehicleKinematics.h"
 #include "artery/utility/Geometry.h"
 #include <omnetpp/simtime.h>
 #include <boost/circular_buffer.hpp>
@@ -41,29 +41,31 @@ class VehicleDataProvider
 	public:
 		using StationType = vanetza::geonet::StationType;
 
-		VehicleDataProvider();
 		VehicleDataProvider(uint32_t id);
 
 		// prevent inadvertent VDP copies
 		VehicleDataProvider(const VehicleDataProvider&) = delete;
 		VehicleDataProvider& operator=(const VehicleDataProvider&) = delete;
 
-		void update(const traci::VehicleController*);
+		void update(const VehicleKinematics&);
 		omnetpp::SimTime updated() const { return mLastUpdate; }
 
-		uint32_t station_id() const { return mStationId; }
-		const Position& position() const { return mPosition; }
-		vanetza::units::GeoAngle longitude() const { return mGeoPosition.longitude; } // positive for east
-		vanetza::units::GeoAngle latitude() const { return mGeoPosition.latitude; } // positive for north
-		vanetza::units::Velocity speed() const { return mSpeed; }
-		vanetza::units::Acceleration acceleration() const { return mAccel; }
-		vanetza::units::Angle heading() const { return mHeading; } // degree from north, clockwise
-		vanetza::units::AngularVelocity yaw_rate() const { return mYawRate; } // left turn positive
+		const Position& position() const { return mVehicleKinematics.position; }
+		vanetza::units::GeoAngle longitude() const { return mVehicleKinematics.geo_position.longitude; } // positive for east
+		vanetza::units::GeoAngle latitude() const { return mVehicleKinematics.geo_position.latitude; } // positive for north
+		vanetza::units::Velocity speed() const { return mVehicleKinematics.speed; }
+		vanetza::units::Acceleration acceleration() const { return mVehicleKinematics.acceleration; }
+		vanetza::units::Angle heading() const { return mVehicleKinematics.heading; } // degree from north, clockwise
+		vanetza::units::AngularVelocity yaw_rate() const { return mVehicleKinematics.yaw_rate; } // left turn positive
 		vanetza::units::Curvature curvature() const { return mCurvature; } // 1/m radius, left turn positive
-		double confidence() const { return mConfidence; } // percentage value
+		double curvature_confidence() const { return mConfidence; } // percentage value
 
 		void setStationType(StationType);
 		StationType getStationType() const;
+
+		void setStationId(uint32_t id);
+		uint32_t getStationId() const { return mStationId; }
+		uint32_t station_id() const { return mStationId; } /*< deprecated, use getStationId */
 
 	private:
 		typedef boost::units::quantity<boost::units::si::angular_acceleration> AngularAcceleration;
@@ -73,12 +75,7 @@ class VehicleDataProvider
 
 		uint32_t mStationId;
 		StationType mStationType;
-		Position mPosition;
-		GeoPosition mGeoPosition;
-		vanetza::units::Velocity mSpeed;
-		vanetza::units::Acceleration mAccel;
-		vanetza::units::Angle mHeading;
-		vanetza::units::AngularVelocity mYawRate;
+		VehicleKinematics mVehicleKinematics;
 		vanetza::units::Curvature mCurvature;
 		double mConfidence;
 		omnetpp::SimTime mLastUpdate;

@@ -1,17 +1,19 @@
 add_artery_feature(envmod
+    CarIdentityRegistrant.cc
     EnvironmentModelObject.cc
     GlobalEnvironmentModel.cc
-    InterdistanceMatrix.cc
     LocalEnvironmentModel.cc
-    PreselectionPolygon.cc
-    PreselectionRtree.cc
     sensor/BaseSensor.cc
     sensor/CamSensor.cc
-    sensor/FrontRadar.cc
+    sensor/FovSensor.cc
     sensor/RadarSensor.cc
-    sensor/RearRadar.cc
+    sensor/RsuFovSensor.cc
+    sensor/RsuRadarSensor.cc
+    sensor/RsuSeeThroughSensor.cc
+    sensor/SeeThroughSensor.cc
     sensor/SensorConfiguration.cc
     sensor/SensorPosition.cc
-    sensor/SensorVisualizationConfig.cc
+    service/CollectivePerceptionMockMessage.cc
+    service/CollectivePerceptionMockService.cc
     service/EnvmodPrinter.cc
 )

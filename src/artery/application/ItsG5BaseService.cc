@@ -18,7 +18,7 @@
 
 #include "artery/application/ItsG5Service.h"
 #include "artery/application/Middleware.h"
-#include "veins/base/utils/FindModule.h"
+#include <inet/common/ModuleAccess.h>
 #include <omnetpp/clog.h>
 #include <cassert>
 
@@ -72,12 +72,17 @@ PortNumber ItsG5BaseService::getPortNumber(ChannelNumber ch) const
 
 cModule* ItsG5BaseService::findHost()
 {
-	return FindModule<>::findHost(this);
+	return inet::findContainingNode(m_middleware);
 }
 
 void ItsG5BaseService::initialize()
 {
-	Middleware* middleware = dynamic_cast<Middleware*>(getParentModule());
+	auto* parent = getParentModule();
+	// if this service is part of a compound module, the Middleware is its grand parent
+	if (!parent->getModuleType()->isSimple()) {
+		parent = parent->getParentModule();
+	}
+	Middleware* middleware = dynamic_cast<Middleware*>(parent);
 	if (middleware == nullptr) {
 		throw cRuntimeError("Middleware not found");
 	}

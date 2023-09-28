@@ -4,19 +4,19 @@
 #include "traci/Listener.h"
 #include <veins/modules/obstacle/ObstacleControl.h>
 
-namespace traci { class LiteAPI; }
+namespace traci { class API; }
 
 namespace artery
 {
 
-class VeinsObstacleControl : public Veins::ObstacleControl, public traci::Listener
+class VeinsObstacleControl : public veins::ObstacleControl, public traci::Listener
 {
 public:
     void initialize(int stage) override;
 
 private:
     void traciInit() override;
-    void fetchObstacles(traci::LiteAPI&);
+    void fetchObstacles(std::shared_ptr<traci::API>);
 };
 
 } // namespace artery

@@ -1,6 +1,12 @@
 add_subdirectory(artery)
 add_subdirectory(gemv2)
 add_subdirectory(highway-police)
+if(WITH_ENVMOD)
+    add_subdirectory(rsu_grid)
+    add_subdirectory(m50)
+    add_subdirectory(test-services)
+    add_subdirectory(test-services-cv2x)
+endif()
 if(WITH_STORYBOARD)
     add_subdirectory(storyboard)
 endif()
@@ -10,20 +16,23 @@ endif()
 if(WITH_TRANSFUSION)
     add_subdirectory(transfusion)
 endif()
+if(WITH_OTS)
+    add_opp_run(ots_demo WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ots-demo)
+endif()
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/mt-its2017/omnetpp.ini)
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/mt-its2017/omnetpp.ini AND WITH_STORYBOARD)
     add_opp_run(mtits2017 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/mt-its2017)
     add_opp_test(mtits2017 SUFFIX test SIMTIME_LIMIT 30s)
 endif()
 
 if(TARGET lte)
-    add_library(artery-lte INTERFACE)
-    target_link_libraries(artery-lte INTERFACE artery lte)
-    add_opp_run(simulte
-        DEPENDENCY artery-lte
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/simulte)
+    # keep artery-lte target for backward-compatibility
+    add_library(artery-lte ALIAS artery)
+    add_opp_run(simulte WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/simulte)
     add_opp_test(simulte SUFFIX cellular CONFIG VoIP-UpLink SIMTIME_LIMIT 10s)
     add_opp_test(simulte SUFFIX d2d CONFIG AlertMulticast SIMTIME_LIMIT 25s)
+    add_subdirectory(m50-cv2x)
     add_opp_run(simulte-cars
         DEPENDENCY artery-lte
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cars)
@@ -39,6 +48,15 @@ if(TARGET lte)
     add_opp_run(personal-experiments
             DEPENDENCY artery-lte
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/personal-experiments)
+    add_opp_run(personal-andres-experiments
+            DEPENDENCY artery-lte
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/personal-andres-experiments)
+    add_opp_run(personal-Validation-simulteApp
+            DEPENDENCY artery-lte
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/personal-Validation-simulteApp)
+    add_opp_run(personal-DummyRun
+            DEPENDENCY artery-lte
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/personal-DummyRun)
     add_opp_run(personal-Validation
             DEPENDENCY artery-lte
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/personal-Validation)

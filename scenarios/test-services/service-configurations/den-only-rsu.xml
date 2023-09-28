@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<services>
+	<service type="artery.application.RsuDenService" name="RDEN">
+		<listener port="2002" />
+	</service>
+</services>

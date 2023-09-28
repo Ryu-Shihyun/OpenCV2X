@@ -13,6 +13,7 @@ class GeoNetPacket : public omnetpp::cPacket
     public:
         using omnetpp::cPacket::cPacket;
 
+        GeoNetPacket() = default;
         GeoNetPacket(const GeoNetPacket&);
         GeoNetPacket& operator=(const GeoNetPacket&);
         GeoNetPacket(GeoNetPacket&&) = default;
@@ -28,8 +29,11 @@ class GeoNetPacket : public omnetpp::cPacket
         int64_t getBitLength() const override;
         omnetpp::cPacket* dup() const override;
 
+        void setBitLength(int64_t l) override;
+
     private:
         std::unique_ptr<vanetza::PacketVariant> mPayload;
+        bool mFixedLength;
 };
 
 } // namespace artery

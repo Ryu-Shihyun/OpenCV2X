@@ -10,4 +10,6 @@ simple StationaryMiddleware extends Middleware
 {
 	parameters:
 		@class(StationaryMiddleware);
+		@signal[IdentityChanged](type=long);
+		string stationIdDerivation = default("component");
 }

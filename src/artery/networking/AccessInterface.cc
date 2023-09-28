@@ -24,9 +24,14 @@ void AccessInterface::request(const DataRequest& request, std::unique_ptr<ChunkP
     omnetpp::cMethodCallContextSwitcher ctx(mModuleOut);
     ctx.methodCall("request");
 
+    int packet_length = request.fixed_length;
+
     GeoNetPacket* gn = new GeoNetPacket("GeoNet packet");
     gn->setPayload(std::move(payload));
     gn->setControlInfo(new GeoNetRequest(request));
+    if (packet_length > 0){
+        gn->setBitLength(request.fixed_length * 8);
+    }
 
     // gn has been created in the context of mModuleOut, thus ownership is fine
     mModuleOut->send(gn, mGateOut);

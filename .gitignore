@@ -1,5 +1,8 @@
+ansible/*.retry
 scenarios/**/*.pyc
 scenarios/*/results/*
+scenarios/*/.cmdenv-log
+scenarios/*/.qtenvrc
 scenarios/*/.tkenvrc
 scenarios/personal-*/
 
@@ -12,3 +15,20 @@ scenarios/cars/core
 build
 debug
 CMakeFiles
+
+test/
+
+Makefile
+
+*.cmake
+www/
+.vagrant/
+
+# OMNeT++ IDE / Eclipse CDT auto-generated files
+.cproject
+.oppbuildspec
+.project
+.settings
+
+# VSCode auto-generated files
+.vscode

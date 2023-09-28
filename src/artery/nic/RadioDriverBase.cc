@@ -7,6 +7,7 @@ namespace artery
 {
 
 const simsignal_t RadioDriverBase::ChannelLoadSignal = cComponent::registerSignal("ChannelLoad");
+const simsignal_t RadioDriverBase::ChannelOccupancySignal = cComponent::registerSignal("ChannelOccupancy");
 
 void RadioDriverBase::initialize()
 {

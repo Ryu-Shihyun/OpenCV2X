@@ -1,0 +1,13 @@
+<routes>
+
+	<vType id="vtype0" accel="2.6" decel="4.5" sigma="0.5" length="4" lcStrategi="0" lcCooperative="0" lcKeepRight="0" minGap="15" maxSpeed="13.89" departLane="0" departSpeed="max"/>
+
+	<flow id="flow0" type="vtype0" number="1" probability="1" from="NS" to="SE" departLane="0" departSpeed="max"/>
+	<flow id="flow1" type="vtype0" number="1" probability="1" from="SS" to="NE" departLane="0" departSpeed="max"/>
+	<flow id="flow2" type="vtype0" number="1" probability="1" from="ES" to="WE" departLane="0" departSpeed="max"/>
+	<flow id="flow4" type="vtype0" number="1" probability="1" from="WS" to="EE" departLane="0" departSpeed="max"/>
+	<flow id="flow5" type="vtype0" number="1" probability="1" from="LLS" to="URE" departLane="0" departSpeed="max"/>
+	<flow id="flow6" type="vtype0" number="1" probability="1" from="LRS" to="ULE" departLane="0" departSpeed="max"/>
+	<flow id="flow7" type="vtype0" number="1" probability="1" from="ULS" to="LRE" departLane="0" departSpeed="max"/>
+	<flow id="flow8" type="vtype0" number="1" probability="1" from="URS" to="LLE" departLane="0" departSpeed="max"/>
+</routes>

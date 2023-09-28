@@ -2,11 +2,12 @@
 #define NODEMANAGER_H_XH1HSC4Z
 
 #include <cstdint>
+#include <memory>
 
 namespace traci
 {
 
-class LiteAPI;
+class API;
 
 class NodeManager
 {
@@ -18,15 +19,12 @@ public:
     virtual std::size_t getNumberOfNodes() const = 0;
 
     /**
-     * Access to lite API interface
+     * Access to TraCI API interface
      * \return API object
      */
-    virtual LiteAPI* getLiteAPI() = 0;
+    virtual std::shared_ptr<API> getAPI() = 0;
 
     virtual ~NodeManager() = default;
-
-private:
-    //LiteAPI* m_api = nullptr;
 };
 
 } // namespace traci

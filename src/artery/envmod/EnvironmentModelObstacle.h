@@ -7,6 +7,7 @@
 #ifndef ENVIRONMENTMODELOBSTACLE_H_
 #define ENVIRONMENTMODELOBSTACLE_H_
 
+#include "artery/envmod/EnvironmentModelObject.h"
 #include "artery/utility/Geometry.h"
 #include <string>
 #include <vector>
@@ -39,6 +40,7 @@ private:
     std::string mId; //!< Unique obstacle id
     std::vector<Position> mPolygon; //!< Obstacle outline
 };
+
 
 } // namespace artery
 

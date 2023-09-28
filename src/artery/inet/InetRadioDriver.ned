@@ -7,6 +7,7 @@ simple RadioDriver like IRadioDriver
 	parameters:
 		@class(InetRadioDriver);
 		@signal[ChannelLoad](type=double);
+		@statistic[channelBusyRatio](source=ChannelLoad;record=vector);
 		string macModule;
 		string radioModule;
 

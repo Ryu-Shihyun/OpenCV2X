@@ -3,7 +3,7 @@
 #include "artery/nic/RadioDriverProperties.h"
 #include "artery/lte/Mode4RadioDriver.h"
 #include "veins/base/utils/FindModule.h"
-#include "veins/modules/messages/WaveShortMessage_m.h"
+#include <vanetza/btp/data_interface.hpp>
 
 #include "common/LteControlInfo.h"
 #include "stack/phy/packet/cbr_m.h"
@@ -37,9 +37,9 @@ vanetza::MacAddress convert(long addr)
     return mac;
 }
 
-int user_priority(vanetza::AccessCategory ac)
+int user_priority(vanetza::access::AccessCategory ac)
 {
-    using AC = vanetza::AccessCategory;
+    using AC = vanetza::access::AccessCategory;
     int up = 0;
     switch (ac) {
         case AC::BK:
@@ -65,27 +65,37 @@ const simsignal_t channelBusySignal = cComponent::registerSignal("sigChannelBusy
 void Mode4RadioDriver::initialize()
 {
     addStartUpDelay_ = par("addStartUpDelay");
-    if (addStartUpDelay_) {
-        cMessage *startUpMessage = new cMessage("StartUpMsg");
-        double delay = 0.001 * intuniform(0, 1000, 0);
-        scheduleAt((simTime() + delay).trunc(SIMTIME_MS), startUpMessage);
-        startUpComplete_ = false;
-    } else {
-        startUpComplete_ = true;
-    }
+    packetLatencyLimit_ = par("packetLatencyLimit");
+    startUpComplete_ = false;
+    cbrStart_ = false;
 
     RadioDriverBase::initialize();
-    mHost = FindModule<>::findHost(this);
+    mHost = veins::FindModule<>::findHost(this);
     mHost->subscribe(channelBusySignal, this);
 
     mLowerLayerOut = gate("lowerLayerOut");
     mLowerLayerIn = gate("lowerLayerIn");
+
+    if (addStartUpDelay_) {
+        cMessage *startUpMessage = new cMessage("StartUpMsg");
+        double delay = 0.001 * intuniform(0, 1000, 0);
+        scheduleAt((simTime() + delay).trunc(SIMTIME_MS), startUpMessage);
+
+        cMessage *startUpCBRMessage = new cMessage("StartUpCBRMsg");
+        double cbrDelay = 0.001 * intuniform(0, 1000, 0);
+        scheduleAt((simTime() + cbrDelay).trunc(SIMTIME_MS), startUpCBRMessage);
+    } else {
+        startUpComplete_ = true;
+        cbrStart_ = true;
+    }
 
     auto properties = new RadioDriverProperties();
     properties->LinkLayerAddress = vanetza::create_mac_address(mHost->getIndex());
     // CCH used to ensure DCC configures correctly.
     properties->ServingChannel = channel::CCH;
     indicateProperties(properties);
+
+    camGen = registerSignal("camGen");
 
     binder_ = getBinder();
 
@@ -100,17 +110,23 @@ void Mode4RadioDriver::finish()
 }
 
 void Mode4RadioDriver::handleMessage(cMessage* msg){
-    if (msg->isName("CBR")) {
+    if (strcmp(msg->getName(),"CBR") == 0) {
         Cbr* cbrPkt = check_and_cast<Cbr*>(msg);
         double channel_load = cbrPkt->getCbr();
+        double channel_occupancy = cbrPkt->getCr();
         delete cbrPkt;
-        emit(RadioDriverBase::ChannelLoadSignal, channel_load);
+        if (cbrStart_) {
+            emit(RadioDriverBase::ChannelLoadSignal, channel_load);
+            emit(RadioDriverBase::ChannelOccupancySignal, channel_occupancy);
+        }
     } else if (RadioDriverBase::isDataRequest(msg)) {
         handleDataRequest(msg);
     } else if (msg->getArrivalGate() == mLowerLayerIn) {
         handleDataIndication(msg);
     } else if (strcmp(msg->getName(), "StartUpMsg") == 0) {
         startUpComplete_ = true;
+    } else if (strcmp(msg->getName(), "StartUpCBRMsg") == 0) {
+        cbrStart_ = true;
     } else {
         throw cRuntimeError("unexpected message");
     }
@@ -132,40 +148,61 @@ void Mode4RadioDriver::handleDataRequest(cMessage* packet)
 {
     if (startUpComplete_) {
         auto request = check_and_cast<GeoNetRequest *>(packet->removeControlInfo());
+
+        cPacket* pkt = check_and_cast<cPacket*>(packet);
+
         auto lteControlInfo = new FlowControlInfoNonIp();
 
         lteControlInfo->setSrcAddr(convert(request->source_addr));
-        lteControlInfo->setDstAddr(convert(request->destination_addr));
+        lteControlInfo->setDstAddr(convert(vanetza::cBroadcastMacAddress));
         lteControlInfo->setPriority(user_priority(request->access_category));
 
-        std::chrono::milliseconds lifetime_milli = std::chrono::duration_cast<std::chrono::milliseconds>(
-            request->message_lifetime);
-
-        lteControlInfo->setDuration(lifetime_milli.count());
-        lteControlInfo->setCreationTime(packet->getCreationTime());
-
-        if (request->destination_addr == vanetza::cBroadcastMacAddress) {
-            lteControlInfo->setDirection(D2D_MULTI);
+        // Want to be able to fill these automatically
+        if (request->message_rate > 0) {
+            lteControlInfo->setRRI(request->message_rate);
+        } else {
+            lteControlInfo->setRRI(-1);
         }
 
-        packet->setControlInfo(lteControlInfo);
+        if (request->message_category > 0) {
+            lteControlInfo->setMessageCategory(request->message_category);
+        } else{
+            delete packet;
+            delete request;
+            return;
+        }
 
+        lteControlInfo->setDuration(packetLatencyLimit_);
+        lteControlInfo->setCreationTime(packet->getCreationTime());
+
+        lteControlInfo->setDirection(D2D_MULTI);
+
+        pkt->setControlInfo(lteControlInfo);
+
+        if (request->fixed_length > 0) {
+            pkt->setByteLength(request->fixed_length);
+        } else {
+            delete packet;
+            delete request;
+            return;
+        }
+
+        emit(camGen, 1);
 
         delete request;
-        send(packet, mLowerLayerOut);
+
+        send(pkt, mLowerLayerOut);
     } else {
         delete packet;
     }
 }
 
+int Mode4RadioDriver::getNodeID() {
+    return nodeId_;
+}
+
 void Mode4RadioDriver::receiveSignal(omnetpp::cComponent*, omnetpp::simsignal_t signal, bool busy, omnetpp::cObject*)
 {
-    ASSERT(signal == channelBusySignal);
-    if (busy) {
-        mChannelLoadMeasurements.busy();
-    } else {
-        mChannelLoadMeasurements.idle();
-    }
 }
 
 } // namespace artery

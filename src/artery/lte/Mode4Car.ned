@@ -13,8 +13,11 @@ module Mode4Car extends artery.inet.PlainVehicle like INetworkNode
     parameters:
         // LTE NIC
         string nicType = default("LteNicVUeMode4");
+        string radioType = default("Mode4RadioDriver");
+        string dccMechanism = default("FsmDccEntity");
         int macNodeId = default(0);
         int masterId = default(0); // Not yet removed from SimuLTE for Mode 4 simulations
+        double chance = default(0.0);
 
         @networkNode;
         @labels(node,ethernet-node,wireless-node);
@@ -33,7 +36,7 @@ module Mode4Car extends artery.inet.PlainVehicle like INetworkNode
             nodeType = "UE";
         }
 
-        radioDriver: RadioDriver {
+        radioDriver: <radioType> like IRadioDriver {
             parameters:
                 @display("p=250,300");
         }

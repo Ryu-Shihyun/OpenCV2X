@@ -14,6 +14,7 @@ class RadioDriverBase : public omnetpp::cSimpleModule
 {
     public:
         static const omnetpp::simsignal_t ChannelLoadSignal;
+        static const omnetpp::simsignal_t ChannelOccupancySignal;
 
         virtual void initialize() override;
         virtual void handleMessage(omnetpp::cMessage*) override;

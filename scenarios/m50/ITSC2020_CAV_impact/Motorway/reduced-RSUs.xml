@@ -1,0 +1,49 @@
+<RSUs>
+  <!--This file was generated with './RSUGenerator.py -n grid_5x5/grid_scenario_traffic_light.net.xml -o grid_5x5/RSUs.xml'-->
+  <rsu id="M50-J7-20266-RSU" positionX="1621.947676" positionY="3167.166941" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="M50-J9J7-20855-RSU" positionX="1562.294631" positionY="3754.348973" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="M50-J9J7-21258-RSU" positionX="1522.735121" positionY="4155.483427" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="M50-J9J7-21666-RSU" positionX="1517.700948" positionY="4547.780494" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="M50-J7J9-22502-RSU" positionX="1857.907110" positionY="5308.072939" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="M50-J7J9-22851-RSU" positionX="2058.362109" positionY="5600.512142" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="M50-J7J9-23356-RSU" positionX="2344.604917" positionY="6016.969851" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="M50-J9-23852-RSU" positionX="2620.748381" positionY="6427.659596" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+
+ <!-- Test RSU positions
+  <rsu id="T0" positionX="1522.735121" positionY="4155.483427">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="T1" positionX="1517.700948" positionY="4547.780494">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+  <rsu id="T2" positionX="1857.907110" positionY="5308.072939">
+    <antenna direction="-1.5707963267948966"/>4
+    <antenna direction="0"/>
+  </rsu> -->
+</RSUs>

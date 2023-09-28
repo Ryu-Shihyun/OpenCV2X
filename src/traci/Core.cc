@@ -1,9 +1,9 @@
 #include "traci/Core.h"
 #include "traci/Launcher.h"
-#include "traci/LiteAPI.h"
 #include "traci/API.h"
 #include "traci/SubscriptionManager.h"
 #include <inet/common/ModuleAccess.h>
+#include <limits>
 
 Define_Module(traci::Core)
 
@@ -20,7 +20,7 @@ const simsignal_t closeSignal = cComponent::registerSignal("traci.close");
 namespace traci
 {
 
-Core::Core() : m_traci(new API()), m_lite(new LiteAPI(*m_traci)), m_subscriptions(nullptr)
+Core::Core() : m_traci(new API()), m_subscriptions(nullptr)
 {
 }
 
@@ -34,6 +34,7 @@ void Core::initialize()
 {
     m_connectEvent = new cMessage("connect TraCI");
     m_updateEvent = new cMessage("TraCI step");
+    m_updateEvent->setSchedulingPriority(std::numeric_limits<short>::min());
     cModule* manager = getParentModule();
     m_launcher = inet::getModuleFromPar<Launcher>(par("launcherModule"), manager);
     m_stopping = par("selfStopping");
@@ -95,15 +96,16 @@ void Core::checkVersion()
 
 void Core::syncTime()
 {
+    SimTime offset { m_traci->simulation.getCurrentTime(), SIMTIME_MS };
     const SimTime now = simTime();
     if (!now.isZero()) {
-        m_traci->simulationStep(now.dbl());
+        m_traci->simulationStep((now + offset).dbl());
     }
 }
 
-LiteAPI& Core::getLiteAPI()
+std::shared_ptr<API> Core::getAPI()
 {
-    return *m_lite;
+    return m_traci;
 }
 
 } // namespace traci

@@ -1,0 +1,6 @@
+<RSUs>
+  <rsu id="M50-J7-20266-RSU" positionX="1000" positionY="0">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+</RSUs>

@@ -6,9 +6,10 @@
 
 #include "artery/inet/gemv2/VehicleIndex.h"
 #include "artery/inet/gemv2/Visualizer.h"
+#include "artery/traci/Cast.h"
 #include "traci/Core.h"
 #include "traci/BasicNodeManager.h"
-#include "traci/LiteAPI.h"
+#include "traci/API.h"
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/register/linestring.hpp>
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
@@ -77,25 +78,30 @@ void VehicleIndex::receiveSignal(cComponent* source, simsignal_t signal, const c
 {
     Enter_Method_Silent();
     if (signal == traci::BasicNodeManager::addVehicleSignal) {
-        traci::LiteAPI* api = check_and_cast<traci::NodeManager*>(source)->getLiteAPI();
+        auto api = check_and_cast<traci::NodeManager*>(source)->getAPI();
         ASSERT(api);
         Vehicle vehicle(*api, id, mVehicleMargin);
-        mVehicles.emplace(id, std::move(vehicle));
+        auto insertion = mVehicles.emplace(id, std::move(vehicle));
+        if (insertion.second) {
+            const Vehicle& vehicle = insertion.first->second;
+            RtreeValue value {
+                bg::return_envelope<RtreeValue::first_type>(vehicle.getOutline()),
+                insertion.first };
+            mVehicleRtree.insert(std::move(value));
+        }
     } else if (signal == traci::BasicNodeManager::updateVehicleSignal) {
         auto vehicle = check_and_cast<traci::BasicNodeManager::VehicleObject*>(obj);
         mVehicles.at(id).update(vehicle->getPosition(), vehicle->getHeading());
+        mRtreeTainted = true;
     } else if (signal == traci::BasicNodeManager::removeVehicleSignal) {
         mVehicles.erase(id);
-    } else {
-        return;
+        mRtreeTainted = true;
     }
-
-    bool mRtreeTainted = true;
 }
 
 bool VehicleIndex::anyBlockage(const Position& a, const Position& b) const
 {
-    ASSERT(!mRtreeTainted);
+    ASSERT(!mRtreeTainted && mVehicles.size() == mVehicleRtree.size());
     const LineOfSight los { a, b };
     auto rtree_intersect = bg::index::intersects(los);
     return std::any_of(mVehicleRtree.qbegin(rtree_intersect), mVehicleRtree.qend(),
@@ -122,6 +128,7 @@ bool VehicleIndex::anyBlockage(const Position& a, const Position& b, double heig
 std::vector<const VehicleIndex::Vehicle*>
 VehicleIndex::getObstructingVehicles(const Position& a, const Position& b) const
 {
+    ASSERT(!mRtreeTainted);
     std::vector<const Vehicle*> result;
     const LineOfSight los { a, b };
     auto rtree_intersect = bg::index::intersects(los);
@@ -134,13 +141,13 @@ VehicleIndex::getObstructingVehicles(const Position& a, const Position& b) const
     return result;
 }
 
-VehicleIndex::Vehicle::Vehicle(traci::LiteAPI& api, const std::string& id, double margin) :
-    mBoundary(api.simulation().getNetBoundary()), mHeight(0.0)
+VehicleIndex::Vehicle::Vehicle(const traci::API& api, const std::string& id, double margin) :
+    mBoundary(api.simulation.getNetBoundary()), mHeight(0.0)
 {
-    auto vtype = api.vehicle().getTypeID(id);
-    mHeight = api.vehicletype().getHeight(vtype);
-    createLocalOutline(api.vehicletype().getWidth(vtype), api.vehicletype().getLength(vtype), margin);
-    update(api.vehicle().getPosition(id), traci::TraCIAngle { api.vehicle().getAngle(id) });
+    auto vtype = api.vehicle.getTypeID(id);
+    mHeight = api.vehicletype.getHeight(vtype);
+    createLocalOutline(api.vehicletype.getWidth(vtype), api.vehicletype.getLength(vtype), margin);
+    update(api.vehicle.getPosition(id), traci::TraCIAngle { api.vehicle.getAngle(id) });
 }
 
 void VehicleIndex::Vehicle::update(const traci::TraCIPosition& pos, traci::TraCIAngle heading)
@@ -183,10 +190,29 @@ void VehicleIndex::Vehicle::calculateWorldOutline()
 std::vector<const VehicleIndex::Vehicle*>
 VehicleIndex::vehiclesEllipse(const Position& a, const Position& b, double r) const
 {
+    std::vector<const Vehicle*> vehicles;
+    vehiclesEllipse(a, b, r, [&vehicles](const Vehicle& vehicle) { vehicles.push_back(&vehicle); });
+    return vehicles;
+}
+
+std::vector<const VehicleIndex::Vehicle*>
+VehicleIndex::vehiclesEllipseOthers(const Position& a, const Position& b, double r) const
+{
+    std::vector<const Vehicle*> vehicles;
+    vehiclesEllipse(a, b, r, [&](const Vehicle& vehicle) {
+        if (!bg::within(a, vehicle.getOutline()) && !bg::within(b, vehicle.getOutline())) {
+            vehicles.push_back(&vehicle);
+        }
+    });
+    return vehicles;
+}
+
+void VehicleIndex::vehiclesEllipse(const Position& a, const Position& b, double r, std::function<void(const Vehicle&)> fn) const
+{
+    ASSERT(!mRtreeTainted);
     using boost::units::fmin;
     using boost::units::fmax;
 
-    std::vector<const Vehicle*> vehicles;
     const double d = bg::distance(a, b);
     const double k = 0.5 * (r - d);
 
@@ -205,12 +231,10 @@ VehicleIndex::vehiclesEllipse(const Position& a, const Position& b, double r) co
             const Position& c = vehicle.getMidpoint();
             if (bg::distance(a, c) + bg::distance(b, c) <= r) {
                 // vehicle's center is within ellipse
-                vehicles.push_back(&vehicle);
+                fn(vehicle);
             }
         }
     }
-
-    return vehicles;
 }
 
 } // namespace gemv2

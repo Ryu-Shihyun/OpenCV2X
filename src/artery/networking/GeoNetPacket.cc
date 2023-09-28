@@ -1,5 +1,7 @@
 #include "artery/networking/GeoNetPacket.h"
 
+Register_Class(artery::GeoNetPacket)
+
 namespace artery
 {
 
@@ -10,10 +12,13 @@ GeoNetPacket::GeoNetPacket(const GeoNetPacket& other)
 
 GeoNetPacket& GeoNetPacket::operator=(const GeoNetPacket& other)
 {
-    if (other.mPayload) {
-        mPayload.reset(new vanetza::PacketVariant(*other.mPayload));
-    } else {
-        mPayload.reset();
+    if (&other != this) {
+        cPacket::operator=(other);
+        if (other.mPayload) {
+            mPayload.reset(new vanetza::PacketVariant(*other.mPayload));
+        } else {
+            mPayload.reset();
+        }
     }
     return *this;
 }
@@ -70,10 +75,18 @@ std::unique_ptr<vanetza::PacketVariant> GeoNetPacket::extractPayload() &&
 int64_t GeoNetPacket::getBitLength() const
 {
     int64_t length = omnetpp::cPacket::getBitLength();
-    if (mPayload) {
-        length += size(*mPayload) * 8;
+    if (!mFixedLength){
+        if (mPayload) {
+            length += size(*mPayload) * 8;
+        }
     }
     return length;
+}
+
+void GeoNetPacket::setBitLength(int64_t length)
+{
+    mFixedLength = true;
+    omnetpp::cPacket::setBitLength(length);
 }
 
 omnetpp::cPacket* GeoNetPacket::dup() const

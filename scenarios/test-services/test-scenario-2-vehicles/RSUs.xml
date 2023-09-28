@@ -1,0 +1,7 @@
+<RSUs>
+  <!--This file was generated with './RSUGenerator.py -n grid_5x5/grid_scenario_traffic_light.net.xml -o grid_5x5/RSUs.xml'-->
+  <rsu id="M50-J7-20266-RSU" positionX="1000" positionY="0" positionZ="8">
+    <antenna direction="-1.5707963267948966"/>
+    <antenna direction="0"/>
+  </rsu>
+</RSUs>

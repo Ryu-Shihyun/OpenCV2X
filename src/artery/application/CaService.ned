@@ -20,9 +20,11 @@ simple CaService like ItsG5Service
     parameters:
         @signal[CamReceived](type=CaObject);
         @signal[CamSent](type=CaObject);
+        @signal[StationType](type=long);
 
         @statistic[reception](source=CamReceived;record=vector(camStationId)?,vector(camGenerationDeltaTime)?);
         @statistic[transmission](source=CamSent;record=vector(camStationId)?,vector(camGenerationDeltaTime)?);
+        @statistic[stationType](source=StationType;record=vector);
 
         // evaluate DCC transmission interval restrictions
         bool withDccRestriction = default(true);
@@ -30,9 +32,6 @@ simple CaService like ItsG5Service
         // generation interval boundaries
         double minInterval @unit(s) = default(0.1s);
         double maxInterval @unit(s) = default(1.0s);
-
-        bool exponentialNonPeriodic = default(false);
-        double exponentialMean @unit(s) = default(0.05s);
 
         // generate at fixed rate (using minInterval, optionally restricted by DCC)
         bool fixedRate = default(false);
@@ -45,4 +44,10 @@ simple CaService like ItsG5Service
 
         // change in speed triggering CAM generation (in meter/second)
         double speedDelta @unit(mps) = default(0.5mps);
+
+        // length of path history
+        volatile int pathHistoryLength = default(23);
+
+        // Determine the sizes based on AECOM pcap files
+        bool aecomSizes = default(false);
 }

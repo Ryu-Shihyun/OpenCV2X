@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<regions>
+
+    <polygon name="m50">
+        <point x="1450" y="970"/>
+        <point x="3250" y="970"/>
+        <point x="3250" y="6200"/>
+        <point x="1450" y="6200"/>
+    </polygon>
+
+</regions>

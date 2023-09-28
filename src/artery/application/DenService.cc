@@ -25,6 +25,7 @@ namespace artery
 Define_Module(DenService)
 
 static const simsignal_t denmReceivedSignal = cComponent::registerSignal("DenmReceived");
+static const simsignal_t denmSentSignal = cComponent::registerSignal("DenmSent");
 static const simsignal_t storyboardSignal = cComponent::registerSignal("StoryboardSignal");
 
 DenService::DenService() :
@@ -73,8 +74,8 @@ void DenService::receiveSignal(cComponent*, simsignal_t signal, cObject* obj, cO
 {
     if (signal == storyboardSignal) {
         StoryboardSignal* storyboardSignalObj = check_and_cast<StoryboardSignal*>(obj);
-        for (auto& use_case : mUseCases) {
-            use_case.handleStoryboardTrigger(*storyboardSignalObj);
+        for (auto use_case : mUseCases) {
+            use_case->handleStoryboardTrigger(*storyboardSignalObj);
         }
     }
 }
@@ -90,8 +91,8 @@ void DenService::indicate(const vanetza::btp::DataIndication& indication, std::u
         mMemory->received(obj);
         emit(denmReceivedSignal, &obj);
 
-        for (auto& use_case : mUseCases) {
-            use_case.indicate(obj);
+        for (auto use_case : mUseCases) {
+            use_case->indicate(obj);
         }
     }
 }
@@ -100,8 +101,8 @@ void DenService::trigger()
 {
     mMemory->drop();
 
-    for (auto& use_case : mUseCases) {
-        use_case.check();
+    for (auto use_case : mUseCases) {
+        use_case->check();
     }
 }
 
@@ -126,10 +127,14 @@ std::shared_ptr<const den::Memory> DenService::getMemory() const
 void DenService::sendDenm(vanetza::asn1::Denm&& message, vanetza::btp::DataRequestB& request)
 {
     fillRequest(request);
+    DenmObject obj { std::move(message) };
+    emit(denmSentSignal, &obj);
 
     using namespace vanetza;
+    using DenmConvertible = vanetza::convertible::byte_buffer_impl<vanetza::asn1::Denm>;
     std::unique_ptr<geonet::DownPacket> payload { new geonet::DownPacket };
-    payload->layer(OsiLayer::Application) = std::move(message);
+    std::unique_ptr<vanetza::convertible::byte_buffer> denm { new DenmConvertible { obj.shared_ptr() } };
+    payload->layer(OsiLayer::Application) = vanetza::ByteBufferConvertible { std::move(denm) };
     this->request(request, std::move(payload));
 }
 

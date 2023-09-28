@@ -1,6 +1,7 @@
 #include "artery/storyboard/Storyboard.h"
 #include "artery/storyboard/Story.h"
 #include "artery/storyboard/Effect.h"
+#include "artery/traci/Cast.h"
 #include "artery/traci/VehicleController.h"
 #include "inet/common/ModuleAccess.h"
 #include "traci/Core.h"
@@ -28,11 +29,11 @@ const auto traciStepSignal = omnetpp::cComponent::registerSignal("traci.step");
 class PythonContextImpl : public Storyboard::PythonContext
 {
 public:
-    pybind11::module& module() override { return m_module; }
+    py::module& module() override { return m_module; }
 
 private:
-    pybind11::scoped_interpreter m_interpreter;
-    pybind11::module m_module;
+    py::scoped_interpreter m_interpreter;
+    py::module m_module;
 };
 
 } // namespace
@@ -120,7 +121,7 @@ void Storyboard::receiveSignal(cComponent* source, simsignal_t signalId, const s
     }
     else if (signalId == traciInitSignal) {
         traci::Core* core = check_and_cast<traci::Core*>(source);
-        const libsumo::TraCIPositionVector& boundary = core->getLiteAPI().simulation().getNetBoundary();
+        const libsumo::TraCIPositionVector& boundary = core->getAPI()->simulation.getNetBoundary();
         mNetworkBoundary = traci::Boundary { boundary };
 
         try {

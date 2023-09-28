@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="pybind11"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake\;CMake Files\extern\;CMake Files\extern\vanetza\;CMake Files\extern\vanetza\build\;CMake Files\extern\vanetza\cmake\;CMake Files\extern\pybind11\;CMake Files\extern\pybind11\tools\;CMake Files\src\;CMake Files\src\artery\;CMake Files\src\artery\storyboard\;CMake Files\src\artery\envmod\;CMake Files\src\traci\;CMake Files\scenarios\;CMake Files\scenarios\artery\;CMake Files\scenarios\gemv2\;CMake Files\scenarios\highway-police\;CMake Files\scenarios\storyboard\;CMake Files\scenarios\lte-blackice\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/brianmccarthy/git_repos/OpenCV2X/src/artery/storyboard/pybind11"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/brianmccarthy/git_repos/OpenCV2X/src/artery/storyboard/pybind11/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/brianmccarthy/git_repos/OpenCV2X/src/artery/storyboard/pybind11/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/brianmccarthy/git_repos/OpenCV2X/src/artery/storyboard/pybind11/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/brianmccarthy/git_repos/OpenCV2X/src/artery/storyboard/pybind11/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/INET-targets.cmake">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/lte-targets.cmake">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/veins-targets.cmake">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/cmake/AddOppBuildTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/cmake/AddOppRun.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/cmake/FindOmnetPP.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/cmake/GenerateOppMessage.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/cmake/GetNedFolders.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/cmake/ImportOppTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/vanetza/build/VanetzaConfig.cmake">
+			<Option virtualFolder="CMake Files\extern\vanetza\build\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/vanetza/build/VanetzaConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\extern\vanetza\build\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/vanetza/build/VanetzaExports.cmake">
+			<Option virtualFolder="CMake Files\extern\vanetza\build\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/vanetza/cmake/CompatBoostTargets.cmake">
+			<Option virtualFolder="CMake Files\extern\vanetza\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/vanetza/cmake/FindCryptoPP.cmake">
+			<Option virtualFolder="CMake Files\extern\vanetza\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/vanetza/cmake/FindGeographicLib.cmake">
+			<Option virtualFolder="CMake Files\extern\vanetza\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/vanetza/cmake/MacroFindDependencyComponents.cmake">
+			<Option virtualFolder="CMake Files\extern\vanetza\cmake\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/pybind11/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\extern\pybind11\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/pybind11/tools/FindPythonLibsNew.cmake">
+			<Option virtualFolder="CMake Files\extern\pybind11\tools\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/extern/pybind11/tools/pybind11Tools.cmake">
+			<Option virtualFolder="CMake Files\extern\pybind11\tools\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/src/artery/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\artery\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/src/artery/storyboard/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\artery\storyboard\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/src/artery/envmod/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\artery\envmod\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/src/traci/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\traci\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/scenarios/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scenarios\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/scenarios/artery/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scenarios\artery\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/scenarios/gemv2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scenarios\gemv2\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/scenarios/highway-police/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scenarios\highway-police\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/scenarios/storyboard/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scenarios\storyboard\"/>
+		</Unit>
+		<Unit filename="/home/brianmccarthy/git_repos/OpenCV2X/scenarios/lte-blackice/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scenarios\lte-blackice\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

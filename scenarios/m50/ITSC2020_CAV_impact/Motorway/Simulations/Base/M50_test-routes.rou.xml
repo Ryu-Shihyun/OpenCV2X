@@ -1,0 +1,8 @@
+<routes>
+
+    <vType id="vtype0" accel="2.6" decel="4.5" sigma="0.5" length="4" lcStrategi="0" lcCooperative="0" lcKeepRight="0" minGap="15" maxSpeed="27.78" departLane="0" departSpeed="max"/>
+    <vType id="vtype1" accel="2.6" decel="4.5" sigma="0.5" length="4" lcStrategi="0" lcCooperative="0" lcKeepRight="0" minGap="15" maxSpeed="27.78" departLane="1" departSpeed="max"/>
+
+    <flow id="flow0" type="vtype0" number="10" probability="0.5" from="106130759" to="345616204#1.655"/>
+    <flow id="flow1" type="vtype1" number="0" probability="0.5" from="75259388-AddedOffRampEdge" to="gneE12"/>
+</routes>

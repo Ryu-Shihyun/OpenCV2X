@@ -1,0 +1,4 @@
+<vehicles>
+    <vehicle type="artery.lte.Mode4Car" rate="0.07" />
+    <vehicle type="artery.inet.PlainVehicle" rate="0.93" />
+</vehicles>
